@@ -2,15 +2,15 @@
 
 
 //query the url and get data from the site using curl
-void init_site_data(SITE_DATA ** site_data ,URL * url){
+void init_dataset(DATA_SET ** site_data ,URL * url){
 
-  *site_data = (SITE_DATA * ) calloc(url->urlcount ,
-				    sizeof(SITE_DATA) );
+  *site_data = (DATA_SET * ) calloc(url->urlcount ,
+				    sizeof(DATA_SET) );
 
   for(int i = 0 ; i < url->urlcount ; i++){
 
     (*site_data)[i].url =  url->urlname[i];
-    (*site_data)[i].index = i;
+    
       
   }
 
@@ -26,7 +26,7 @@ size_t getCode(char *buffer, size_t itemsize, size_t totalitems, void *userdata 
 
 //this function is set to modify individual site data 
 //please dont forget to add this to threaded funtions
-void getSiteData(SITE_DATA * site_data , CURL * curl){
+void getSiteData(DATA_SET * site_data , CURL * curl){
 
   curl = curl_easy_init();
   curl_easy_setopt(curl,

@@ -17,23 +17,23 @@ typedef enum SITE_STATUS{
 }SITE_STATUS;
 
 
-typedef struct SITE_DATA{
+typedef struct DATA_SET{
 
   char * url;
   long status_code;
   double conn_time;
   double res_time;
   double code;
-
-  int index;
-  int status; //SITE_STATUS
+  SITE_STATUS status; 
   
-}SITE_DATA;
+  
+  
+}DATA_SET;
 
 
 //query the url and get data from the site using curl
-void init_site_data(SITE_DATA ** site_data ,URL * url);
+void init_dataset(DATA_SET ** site_data ,URL * url);
 
 //this function is set to modify individual site data 
 //please dont forget to add this to threaded funtions
-void getSiteData(SITE_DATA * site_data, CURL * curl);
+void getSiteData(DATA_SET * site_data, CURL * curl);
