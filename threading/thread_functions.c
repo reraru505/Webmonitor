@@ -53,34 +53,69 @@ void spawn_collector_threads(THREAD_SUBSET ** subset , int len){
 }
 
 
-//void check_and_copy(SET * set , SET * copy_of_set , THREAD_SUBSET * subset ){
-//
-//  for(int i = 0 ;  i < set->set_len ; i++){
-//    if(subset[i].status == COPYING ){
-//      memcpy(copy_of_set[i].data , set[i].data , sizeof(SITE_DATA) );
-//      subset[i].status = COMPLETE;
-//    }
-//  }
-//  
-//  
-//}
+void check_and_copy(DATA_SET ** copy_of_dataset , THREAD_SUBSET ** subset , int len ){
 
-//void check_and_kill(SET * set , THREAD_SUBSET * subset){
-//
-//  for(int i = 0 ; i < set->set_len ; i++){
-//    if(subset[i].status == COMPLETE){
-//      pthread_join(set->threadID[i] , NULL);
-//    }
-//  }
-//  
-//}
+  for(int i = 0 ;  i < len ; i++){
+    if((*subset)[i].status == COPYING ){
+      (*copy_of_dataset)[i].status_code = (*subset)[i].data_set->status_code;
+      (*copy_of_dataset)[i].conn_time = (*subset)[i].data_set->conn_time;
+      (*copy_of_dataset)[i].res_time = (*subset)[i].data_set->res_time;
+      (*copy_of_dataset)[i].code = (*subset)[i].data_set->code;
+      (*copy_of_dataset)[i].status = (*subset)[i].data_set->status;
+      printf("Data copied from thread %d \n",i);
+      (*subset)[i].status = COMPLETE;
+    }
+  }
+  
+  
+}
+
+void check_and_join(THREAD_SUBSET ** subset , int len){
+
+  for(int i = 0 ; i < len ; i++){
+    
+    if((*subset)[i].status == COMPLETE){
+      pthread_join(*(*subset)[i].thread_id , NULL);
+      (*subset)[i].status = JOINED;
+    }
+    
+  }
+  
+}
+
+void check_and_respawn(THREAD_SUBSET ** subset , int len){
+
+  int ret;
+  
+  for(int i = 0 ; i < len ; i++){
+    if((*subset)[i].status == JOINED){
+
+      (*subset)[i].status = RUNNING;
+    
+      ret = pthread_create((*subset)[i].thread_id ,
+			   NULL ,
+			   start_collection ,
+			   (void *) &(*subset)[i] );
+    
+      if(ret != 0){
+      
+	printf("Error occured while creating threads\n");
+	exit(-1);
+      }else{
+	printf("collector thread no %d spawnned \n",i);
+      }
+
+      
+    }
+  }
+}
 
 void kill_collector_threads(THREAD_SUBSET ** subset , int len){
 
   for(int i = 0 ; i < len ; i++){
 
-    // pthread_cancel(set->threadID[i] );
-    pthread_join(*(*subset)[i].thread_id , NULL );
+    pthread_cancel(*(*subset)[i].thread_id  );
+    //pthread_join(*(*subset)[i].thread_id , NULL );
     curl_easy_cleanup((*subset)[i].curl);
   }
   

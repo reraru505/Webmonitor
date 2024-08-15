@@ -10,6 +10,7 @@ void init_dataset(DATA_SET ** site_data ,URL * url){
   for(int i = 0 ; i < url->urlcount ; i++){
 
     (*site_data)[i].url =  url->urlname[i];
+    (*site_data)[i].status =  UNKNOWN;
     
       
   }

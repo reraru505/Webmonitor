@@ -16,6 +16,7 @@ typedef enum THREAD_STATUS{
   RUNNING,
   COPYING,
   COMPLETE,
+  JOINED
   
 }THREAD_STATUS;
 
@@ -38,8 +39,10 @@ void * start_collection(void * subset);
 
 void spawn_collector_threads(THREAD_SUBSET ** subset , int len);
 
-//void check_and_copy(SET * set , SET * copy_of_set , THREAD_SUBSET * subset );
+void check_and_copy(DATA_SET ** copy_of_dataset , THREAD_SUBSET ** subset , int len );
 
-//void check_and_kill(SET * set , THREAD_SUBSET * subset);
+void check_and_join(THREAD_SUBSET ** subset , int len);
+
+void check_and_respawn(THREAD_SUBSET ** subset , int len);
 
 void kill_collector_threads(THREAD_SUBSET ** subset , int len );
